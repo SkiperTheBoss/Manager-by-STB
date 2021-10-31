@@ -11,7 +11,7 @@ A Tool which i created for [ParsecSoda](http://https://github.com/FlavioFS/Parse
 
 **Description**
 
-The Tool is made for the Software [ParsecSoda](http://https://github.com/FlavioFS/ParsecSoda "ParsecSoda") by [FlavioFS](https://github.com/FlavioFS "FlavioFS") which will do a lot of tasks automatically by it self. It basically wrote this Script to Host some Games on [Parsec](https://parsec.app/ "Parsec") and when someone try to close the Game it automatically will restart, so you can use it even if you are away from the Keyboard.
+The Tool is made for the Software [ParsecSoda](http://https://github.com/FlavioFS/ParsecSoda "ParsecSoda") by [FlavioFS](https://github.com/FlavioFS "FlavioFS") which will do a lot of tasks automatically by it self. I basically wrote this Script to Host some Games on [Parsec](https://parsec.app/ "Parsec") and when someone try to close the Game it automatically will restart, so you can use it even if you are away from the Keyboard.
 
 ------------
 
@@ -42,40 +42,42 @@ The Tool is made for the Software [ParsecSoda](http://https://github.com/FlavioF
 ------------
 
 **SET-UP**
+
 Before you start -> make sure you got the **settings.json** and **window.json** and remove the // Comments. Also make sure the Paths are matching with your System.
 
 ------------
 
 **settings.json** 
+
 More in Details will be added. To use the Code below remove the // Comments.
 
 ```hjson
 {
     "Debug":{
-		// Enable Debug
+	// Enable Debug
         "Enabled":0,
-		// Window of the last Session
+	// Window of the last Session
         "LastWindow":{
             "ID":0,
             "IsAttach":0
         }
     },
     "General":{
-		// Tool stays always on Top
+	// Tool stays always on Top
         "AlwaysOnTop":"0",
-		// Borders around the Window (works only on Debug Mode)
+	// Borders around the Window (works only on Debug Mode)
         "Borders":"1",
         "Debug":"0",
-		// Last selected Window
+	// Last selected Window
         "LastSelect":"Gang Beasts",
         "LastTitle":"Starter",
-		// Has no impact yet
+	// Has no impact yet
         "Resize":"0",
         "SelectMode":2,
         "SystemCursor":{
-			// Hide Cursor
+	    // Hide Cursor
             "Enabled":"0",
-			// After 5 seconds
+	    // After 5 seconds
             "Time":5000
         }
     },
@@ -89,15 +91,15 @@ More in Details will be added. To use the Code below remove the // Comments.
         "AutoStart":"0",
         "Execute":"obs64.exe",
         "Parameters":"--minimize-to-tray --multi",
-		// Path to OBS Folder where the Execute is located
+	// Path to OBS Folder where the Execute is located
         "Path":"C:\\Program Files\\obs-studio\\bin\\64bit",
         "Plugins":{
             "OBSCommand":{
                 "Execute":"OBSCommand.exe",
-				// Local IP for Websocket
+		// Local IP for Websocket
                 "IP":"127.0.0.1",
                 "Password":"123456789",
-				// Path to OBSCommand where the Excute is located
+		// Path to OBSCommand where the Excute is located
                 "Path":"C:\\Program Files\\obs-studio\\bin\\64bit\\OBSCommand",
                 "Port":"4444",
                 "Set":{
@@ -160,22 +162,23 @@ More in Details will be added. To use the Code below remove the // Comments.
 ```
 
 **window.json** 
+
 More in Details will be added. To use the Code below remove the // Comments.
 
 ```hjson
 {
     "Gang Beasts":{
-		// Path to the Game Folder
+	// Path to the Game Folder
         "Path":..\Steam\\steamapps\\common\\Gang Beasts",
-		// Execute of the Game
+	// Execute of the Game
         "Execute":"Gang Beasts.exe",
-		// Start in Window Mode
+	// Start in Window Mode
         "Parameters":"-windowed",
-		// It is recommended and for some Games required to start over Steam. In this case add the AppID which you can find when you visit the Steam Store
+	// It is recommended and for some Games required to start over Steam. In this case add the AppID which you can find when you visit the Steam Store
         "Steam":{
             "AppID":"285900"
         },
-		// https://docs.microsoft.com/en-us/windows/win32/winmsg/window-styles
+	// https://docs.microsoft.com/en-us/windows/win32/winmsg/window-styles
         "Style":{
             "WS_BORDER":0,
             "WS_CLIPSIBLINGS":1,
@@ -185,7 +188,7 @@ More in Details will be added. To use the Code below remove the // Comments.
             "WS_MINIMIZEBOX":1,
             "WS_OVERLAPPED":1
         },
-		// https://docs.microsoft.com/en-us/windows/win32/winmsg/extended-window-styles
+	// https://docs.microsoft.com/en-us/windows/win32/winmsg/extended-window-styles
         "ExStyle":{
             "WS_EX_WINDOWEDGE":1,
             "WS_EX_LEFT":1,
