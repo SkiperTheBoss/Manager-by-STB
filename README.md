@@ -43,3 +43,7 @@ The Tool is made for the Software [ParsecSoda](http://https://github.com/FlavioF
 **Image**
 
 ![Manager-by-STB](https://github.com/SkiperTheBoss/Manager-by-STB/blob/main/image/Manager-by-STB.png "Manager-by-STB")
+
+**Visual Paradigm**
+
+[![Visual Paradigm](https://github.com/SkiperTheBoss/Manager-by-STB/blob/main/image/Manager-by-STB-Diagram.png "Visual Paradigm")](https://online.visual-paradigm.com/ "Visual Paradigm")
