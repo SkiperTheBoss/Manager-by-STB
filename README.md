@@ -39,4 +39,5 @@ The Tool is made for the Software [ParsecSoda](http://https://github.com/FlavioF
 * [OPTIONAL] [OBSCommand](https://obsproject.com/forum/resources/command-line-tool-for-obs-websocket-plugin-windows.615/ "OBSCommand") to communicate with OBS Studio.
 
 **Image**
+
 ![Manager-by-STB](https://github.com/SkiperTheBoss/Manager-by-STB/blob/main/image/Manager-by-STB.png "Manager-by-STB")
