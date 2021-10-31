@@ -3,9 +3,6 @@
 ; #NoTrayIcon
 #NoEnv
 
-; TODO
-; Add feature that allows to lock Mouse only at the Window Area + HotKey to en-/disbaled it!
-
 #Include <AutoXYWH>
 #Include <WinGetPosEx>
 #Include <WinGetPos>
@@ -22,7 +19,7 @@
 #Include <SystemCursor>
 #Include %A_ScriptDir%\include\WS.ahk
 
-;OnExit, Exit
+; OnExit, Exit
 
 Menu, Tray, NoStandard
 Menu, Tray, Add, &Show, ManagerGuiShow
@@ -155,6 +152,7 @@ Gui, Status:Margin, 5, 5
 Gui, % "Status:+HwndStatus -SysMenu" A_Space (SettingsData["General"]["AlwaysOnTop"] ? "+AlwaysOnTop" : "-AlwaysOnTop")
 
 ; Status GUI Controls
+; Window
 Gui, Status:Add, GroupBox, x5 y5 w200 h120, Window
 Gui, Status:Add, Text, x15 yp+20, Process: %A_Tab%
 Gui, Status:Add, Text, x+5 yp w200 vStatus_Window_Process, ...
@@ -167,6 +165,7 @@ Gui, Status:Add, Text, x+5 yp w200 vStatus_Window_Size, ...
 Gui, Status:Add, Text, x15 yp+20, Attach:%A_Tab%%A_Tab%
 Gui, Status:Add, Text, x+5 yp w200 vStatus_Window_Attach, ...
 
+; OBS
 Gui, Status:Add, GroupBox, x5 y+10 w200 h120, OBS
 Gui, Status:Add, Text, x15 yp+20, Process: %A_Tab%
 Gui, Status:Add, Text, x+5 yp w200 vStatus_OBS_Process, ...
@@ -179,6 +178,7 @@ Gui, Status:Add, Text, x+5 yp w200 vStatus_OBS_Size, ...
 Gui, Status:Add, Text, x15 yp+20, Attach:%A_Tab%%A_Tab%
 Gui, Status:Add, Text, x+5 yp w200 vStatus_OBS_Attach, ...
 
+; Hotkeys
 Gui, Status:Add, GroupBox, x5 y+10 w200 h85, Hotkeys
 Gui, Status:Add, Text, x15 yp+20, Hide Cursor: %A_Tab%
 Gui, Status:Add, Text, x+5 yp w200 vStatus_Hotkey_Hide_Cursor, disabled
@@ -252,6 +252,7 @@ MsgNum := DllCall("RegisterWindowMessage", Str, "SHELLHOOK")
 OnMessage(MsgNum, "ShellMessage")
 */
 
+; NEEDS a REWORK to go to all Hotkey's dynamically...
 If (SettingsData["HotKeys"]["ClipCursor"])
     Hotkey, % "~" SettingsData["HotKeys"]["ClipCursor"], Toggle_MouseRestrict
 If (SettingsData["HotKeys"]["Auto_Focus"])
@@ -292,6 +293,7 @@ For Path, Data in WindowsData[Get_Window_Title]["Replace"]
 return
 */
 
+; GUI for Hide Cursor Setting
 Window_Hide_Cursor_Setting:
 GUI_Toggle("Window_Hide_Cursor_Setting", "+Disabled")
 If (SettingsData["HotKeys"]["Hide_Cursor"])
@@ -316,6 +318,7 @@ Gui, Window_Hide_Cursor_Setting:Add, Button, x5 y+5 w200 h20 gWindow_Hide_Cursor
 Gui, Window_Hide_Cursor_Setting:Show, w210 h100, Auto-Focus Settings
 return
 
+; Save Settings for Hide Cursor
 Window_Hide_Cursor_Setting_Save:
 GUI_Toggle("Window_Hide_Cursor_Setting", "-Disabled")
 Gui, Window_Hide_Cursor_Setting:Submit, NoHide
@@ -329,6 +332,7 @@ If (HotKey_Set_Hide_Cursor)
 }
 return
 
+; Close the Hide Cursor
 Window_Hide_Cursor_SettingGuiClose:
 GUI_Toggle("Window_Hide_Cursor_Setting", "-Disabled")
 Gui, Window_Hide_Cursor_Setting:Destroy
@@ -337,6 +341,7 @@ If (SettingsData["HotKeys"]["Hide_Cursor"])
     HotKey, % SettingsData["HotKeys"]["Hide_Cursor"], On
 return
 
+; Hotkey for Hide Cursor
 Toggle_Hide_Cursor:
 ToggleHM := ToggleHM ? false : true
 GuiControl, % "Manager:", Window_Hide_Cursor, % ToggleHM ? 1 : 0
