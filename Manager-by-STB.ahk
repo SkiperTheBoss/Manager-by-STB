@@ -3,21 +3,23 @@
 ; #NoTrayIcon
 #NoEnv
 
-#Include <AutoXYWH>
-#Include <WinGetPosEx>
-#Include <WinGetPos>
-#Include <SetParent>
-#Include <JSON>
-#Include <OBS>
-#Include <OBSCommand>
-#Include <CLI>
-#Include <Dock>
-#Include <Array>
-#Include <Borders>
-#Include <Display>
-#Include <ClipCursor>
-#Include <SystemCursor>
+#Include %A_ScriptDir%\include\AutoXYWH.ahk
+#Include %A_ScriptDir%\include\WinGetPosEx.ahk
+#Include %A_ScriptDir%\include\WinGetPos.ahk
+#Include %A_ScriptDir%\include\SetParent.ahk
+#Include %A_ScriptDir%\include\JSON.ahk
+#Include %A_ScriptDir%\include\OBS.ahk
+#Include %A_ScriptDir%\include\OBSCommand.ahk
+#Include %A_ScriptDir%\include\CLI.ahk
+#Include %A_ScriptDir%\include\Dock.ahk
+#Include %A_ScriptDir%\include\Array.ahk
+#Include %A_ScriptDir%\include\Borders.ahk
+#Include %A_ScriptDir%\include\Display.ahk
+#Include %A_ScriptDir%\include\ClipCursor.ahk
+#Include %A_ScriptDir%\include\SystemCursor.ahk
 #Include %A_ScriptDir%\include\WS.ahk
+#Include %A_ScriptDir%\include\IsFullscreen.ahk
+#Include %A_ScriptDir%\include\ScreenCapture.ahk
 
 ; OnExit, Exit
 
