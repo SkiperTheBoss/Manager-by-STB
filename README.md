@@ -47,6 +47,7 @@ Before you start -> make sure you got the **settings.json** and **window.json** 
 
 ------------
 
+
 **settings.json** 
 
 More in Details will be added. To use the Code below remove the // Comments.
@@ -160,6 +161,7 @@ More in Details will be added. To use the Code below remove the // Comments.
     }
 }
 ```
+
 
 **window.json** 
 
