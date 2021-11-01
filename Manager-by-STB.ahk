@@ -20,6 +20,7 @@
 #Include %A_ScriptDir%\include\WS.ahk
 #Include %A_ScriptDir%\include\IsFullscreen.ahk
 #Include %A_ScriptDir%\include\ScreenCapture.ahk
+#Include %A_ScriptDir%\include\XML Class.ahk
 
 ; OnExit, Exit
 
@@ -131,6 +132,7 @@ Gui, Manager:Add, Button, % "x+10 yp-2 w60 h15 Disabled", Settings
 Gui, Manager:Add, Checkbox, % "x15 y+5 vWindow_Display_Mode Disabled" A_Space (SettingsData["Window"]["Display_Mode"] ? "Checked" : ""), Fullscreen to Window
 Gui, Manager:Add, Checkbox, % "x15 y+5 vWindow_ClipCursor" A_Space (SettingsData["Window"]["ClipCursor"] ? "Checked" : ""), Restrict Mouse Area
 Gui, Manager:Add, Button, % "x+2 yp-2 w60 h15 gWindow_ClipCursor_Settings", Settings
+Gui, Manager:Add, Checkbox, % "x15 y+5 vWindow_Change_Settings" A_Space (SettingsData["Window"]["Settings"] ? "Checked" : ""), Change Settings
 Gui, Manager:Add, Checkbox, % "x15 y+5 vWindow_Change_Size gManager_Change_Size" A_Space (SettingsData["Window"]["Size"] ? "Checked" : ""), Change Size
 Gui, Manager:Add, Checkbox, % "x15 y+5 vWindow_Move_to_Position gManager_Move_to_Position" A_Space (SettingsData["Window"]["Move"] ? "Checked" : ""), Move to Position
 Gui, Manager:Add, Text, x15 y+10, Position and Size
@@ -277,67 +279,143 @@ return
 
 Change_Settings:
 Gui, Manager:Submit, NoHide
-For Path, Data in WindowsData[Get_Window_Title]["Settings"]
+If (IsObject(WindowsData) AND Get_Window_Title)
 {
-    If (Path)
+    For Path, Data in WindowsData[Get_Window_Title]["Settings"]
     {
-        ; Register Methode
-        If (Data["Methode"] = "Register")
+        ; Make sure Path/RootKey has any Content...
+        If (Path AND IsObject(Data))
         {
-            For Type, Content in Data["Set"]
+            ; Register Methode
+            If (Data["Methode"] = "Register")
             {
-                For Key, Value in Content
+                For Type, Content in Data["Set"]
                 {
-                    If (Type AND Path AND Key AND Value)
-                        RegWrite, % Type, % Path, % Key, % Value
+                    For Key, Value in Content
+                    {
+                        If (Type AND Path AND Key)
+                            RegWrite, % Type, % Path, % Key, % Value
+                    }
                 }
             }
-        }
 
-        ; StringReplace Methode
-        If (Data["Methode"] = "StringReplace")
-        {
-            ; File must exist...
-            If (FileExist(Path))
+            ; StringReplace Methode
+            If (Data["Methode"] = "StringReplace")
+            {
+                ; File must exist...
+                If (FileExist(Path))
+                {
+                    ; Open File
+                    SettingFile := FileOpen(Path, "rw", "UTF-8-RAW")
+                    ; Get Content of File
+                    SettingData := SettingFile.Read()
+                    ; Start Position of Pointer
+                    SettingPos := 1
+                    ; Split Content of the File after each Line into a Object
+                    SettingLine := StrSplit(SettingData, "`n")
+
+                    For Key, Value in Data["Set"]
+                    {
+                        ; Going trough each Line
+                        Loop % SettingLine.Count()
+                        {
+                            If (InStr(SettingLine[A_Index], Key))
+                            {
+                                NewStr := RegExMatch(SettingData, "\w+\b", UOV, SettingPos + StrLen(Key))
+                                SettingData := RegExReplace(SettingData, UOV, Value,, 1, NewStr)
+                            }
+
+                            ; Set Pointer to the end of current Content of the Line
+                            SettingPos += StrLen(SettingLine[A_Index] (SettingLine.Count() = A_Index ? "" : "`n"))
+                        }
+                        ; Reset Position
+                        SettingPos := 1
+                    }
+
+                    ; Reset Pointer
+                    SettingFile.Seek(false)
+                    ; Write new File
+                    SettingFile.Write(SettingData)
+                    ; Close File
+                    SettingFile.Close()
+                }
+            }
+
+            /*
+            ; JSON Methode - WORK IN PROGRESS
+            If (Data["Methode"] = "JSON")
             {
                 ; Open File
                 SettingFile := FileOpen(Path, "rw", "UTF-8-RAW")
                 ; Get Content of File
                 SettingData := SettingFile.Read()
+                ; Load as JSON
+                SettingData := JSON.Load(SettingData)
                 ; Start Position of Pointer
-                SettingPos := 1
-                ; Split Content of the File after each Line into a Object
-                SettingLine := StrSplit(SettingData, "`n")
+                SettingPos := false
+                ; Set Pointer Position
+                SettingFile.Seek(SettingPos)
 
                 For Key, Value in Data["Set"]
                 {
-                    ; Going trough each Line
-                    Loop % SettingLine.Count()
+                    ;MsgBox % Key A_Space Value
+                    If (SettingData.HasKey(Key))
                     {
-                        If (InStr(SettingLine[A_Index], Key))
-                        {
-                            NewStr := RegExMatch(SettingData, "\w+\b", UOV, SettingPos + StrLen(Key))
-                            If (Value AND UOV) ; Make sure Value and UOV has any content...
-                                SettingData := RegExReplace(SettingData, UOV, Value,, 1, NewStr)
-                        }
-
-                        ; Set Pointer to the end of current Content of the Line
-                        SettingPos += StrLen(SettingLine[A_Index] (SettingLine.Count() = A_Index ? "" : "`n"))
+                        SettingData[Key] := Value
                     }
-                    ; Reset Position
-                    SettingPos := 1
                 }
 
-                ; Reset Pointer
-                SettingFile.Seek(false)
                 ; Write new File
-                SettingFile.Write(SettingData)
-
+                SettingFile.Write(JSON.Dump(SettingData,,4))
                 ; Close File
                 SettingFile.Close()
             }
+
+            ; XML Methode - WORK IN PROGRESS
+            If (Data["Methode"] = "XML" AND)
+            {
+                ; Open File
+                SettingFile := FileOpen(Path, "rw", "UTF-16-RAW")
+                ; Get Content of File
+                SettingData := SettingFile.Read()
+                ; Start Position of Pointer
+                SettingPos := false
+                ; Set Pointer Position
+                SettingFile.Seek(SettingPos)
+
+                ; Create new XML Class
+                XMLData := New XML("xml")
+                ; Load File Content as XML
+                XMLData.XML.LoadXML(SettingData)
+                ; Change Value
+                XMLData.Add("Fullscreen",, "true")
+
+                ; MsgBox % XMLData[]
+                ; Write new File
+                SettingFile.Write(XMLData[])
+                ; Close File
+                SettingFile.Close()
+            }
+            */
+        }
+        else If (Path AND Data)
+        {
+            ; Copy & Paste Methode - WORK IN PROGRESS
+            If (Data["Methode"] = "CopyPaste")
+            {
+                If (FileExist(Path) AND FileExist(Data))
+                {
+                    ; FileCopy, Source, Dest [, Flag (1 = overwrite)]
+                }
+            }
         }
     }
+
+    /*
+    WindowsFile := FileOpen(A_ScriptDir "\windows.json", "r", "UTF-8-RAW")
+    WindowsData := JSON.Load(WindowsFile.Read())
+    WindowsFile.Close()
+    */
 }
 return
 
@@ -1429,6 +1507,9 @@ SettingsData["Window"]["ClipCursor"] := Window_ClipCursor
 
 ; HotKey
 ; SettingsData["Hotkeys"]["ClipCursor"] := HotKey_Set_Mouse_Restrict
+
+; Window
+SettingsData["Window"]["Settings"] := Window_Change_Settings ? Window_Change_Settings : 0
 
 ; Position
 SettingsData["Window"]["Set"]["Pos"]["X"] := Manager_Window_Set_X ? Manager_Window_Set_X : 0
