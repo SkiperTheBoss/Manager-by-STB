@@ -263,37 +263,83 @@ If (SettingsData["HotKeys"]["Hide_Cursor"])
     Hotkey, % "~" SettingsData["HotKeys"]["Hide_Cursor"], Toggle_Hide_Cursor
 return
 
-/*
 ; Create a Function to change Game Settings with all kind of Methode like...
 ; Replace Strings - Search and replace a String
 ; RegEx - Change Entry in the Register
 ; IniRead - Change Value in the IniFile
 ; JSON - Change Object and replace File
+; Copy and Paste preset File
 ; any other format
 
 1::
+GoSub, Change_Settings
+return
+
+Change_Settings:
 Gui, Manager:Submit, NoHide
-For Path, Data in WindowsData[Get_Window_Title]["Replace"]
+For Path, Data in WindowsData[Get_Window_Title]["Settings"]
 {
-    If (FileExist(Path))
+    If (Path)
     {
+        ; Register Methode
+        If (Data["Methode"] = "Register")
+        {
+            For Type, Content in Data["Set"]
+            {
+                For Key, Value in Content
+                {
+                    If (Type AND Path AND Key AND Value)
+                        RegWrite, % Type, % Path, % Key, % Value
+                }
+            }
+        }
+
+        ; StringReplace Methode
         If (Data["Methode"] = "StringReplace")
         {
-            For String, Value in Data
+            ; File must exist...
+            If (FileExist(Path))
             {
-                If (!String = "Methode")
-                {
-                    ChangeWindowFile := FileOpen(Path, "rw", "UTF-8-RAW")
-                    ChangeWindowData := ChangeWindowFile.Read()
+                ; Open File
+                SettingFile := FileOpen(Path, "rw", "UTF-8-RAW")
+                ; Get Content of File
+                SettingData := SettingFile.Read()
+                ; Start Position of Pointer
+                SettingPos := 1
+                ; Split Content of the File after each Line into a Object
+                SettingLine := StrSplit(SettingData, "`n")
 
-                    ChangeWindowFile.Close()
+                For Key, Value in Data["Set"]
+                {
+                    ; Going trough each Line
+                    Loop % SettingLine.Count()
+                    {
+                        If (InStr(SettingLine[A_Index], Key))
+                        {
+                            NewStr := RegExMatch(SettingData, "\w+\b", UOV, SettingPos + StrLen(Key))
+                            If (Value AND UOV) ; Make sure Value and UOV has any content...
+                                SettingData := RegExReplace(SettingData, UOV, Value,, 1, NewStr)
+                        }
+
+                        ; Set Pointer to the end of current Content of the Line
+                        SettingPos += StrLen(SettingLine[A_Index] (SettingLine.Count() = A_Index ? "" : "`n"))
+                    }
+                    ; Reset Position
+                    SettingPos := 1
                 }
+
+                ; Reset Pointer
+                SettingFile.Seek(false)
+                ; Write new File
+                SettingFile.Write(SettingData)
+
+                ; Close File
+                SettingFile.Close()
             }
         }
     }
 }
 return
-*/
 
 ; GUI for Hide Cursor Setting
 Window_Hide_Cursor_Setting:
