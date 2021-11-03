@@ -290,8 +290,8 @@ If (IsObject(WindowsData) AND Get_Window_Title)
         ; Make sure Path/RootKey has any Content...
         If (Path AND IsObject(Data))
         {
-            ; Register Methode
-            If (Data["Methode"] = "Register")
+            ; Registry Methode
+            If (Data["Methode"] = "Registry")
             {
                 For Type, TypeData in Data["Set"]
                 {
