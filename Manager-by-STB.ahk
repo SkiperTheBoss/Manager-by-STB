@@ -115,7 +115,7 @@ Gui, Manager:Add, Button, % "x+34 yp-2 w60 h15 Disabled", Settings
 
 ; Miscellaneous
 Gui, Manager:Add, GroupBox, x5 y+20 w200 h45, Miscellaneous
-Gui, Manager:Add, Checkbox, % "x15 yp+20 vWindow_Hide_Cursor" A_Space (SettingsData["General"]["SystemCursor"]["Enabled"] ? "Checked" : ""), Hide Cursor
+Gui, Manager:Add, Checkbox, % "x15 yp+20 vWindow_Hide_Cursor" A_Space (SettingsData["General"]["SystemCursor"]["Enabled"] ? "Checked" : ""), Hide Cursor (Work in Progress)
 Gui, Manager:Add, Button, % "x+44 yp-2 w60 h15 gWindow_Hide_Cursor_Setting", Settings
 
 ; Window
@@ -133,6 +133,7 @@ Gui, Manager:Add, Checkbox, % "x15 y+5 vWindow_Display_Mode Disabled" A_Space (S
 Gui, Manager:Add, Checkbox, % "x15 y+5 vWindow_ClipCursor" A_Space (SettingsData["Window"]["ClipCursor"] ? "Checked" : ""), Restrict Mouse Area
 Gui, Manager:Add, Button, % "x+2 yp-2 w60 h15 gWindow_ClipCursor_Settings", Settings
 Gui, Manager:Add, Checkbox, % "x15 y+5 vWindow_Change_Settings" A_Space (SettingsData["Window"]["Settings"] ? "Checked" : ""), Change Settings
+Gui, Manager:Add, Button, % "x+20 yp-2 w60 h15", Settings
 Gui, Manager:Add, Checkbox, % "x15 y+5 vWindow_Change_Size gManager_Change_Size" A_Space (SettingsData["Window"]["Size"] ? "Checked" : ""), Change Size
 Gui, Manager:Add, Checkbox, % "x15 y+5 vWindow_Move_to_Position gManager_Move_to_Position" A_Space (SettingsData["Window"]["Move"] ? "Checked" : ""), Move to Position
 Gui, Manager:Add, Text, x15 y+10, Position and Size
@@ -273,9 +274,12 @@ return
 ; Copy and Paste preset File
 ; any other format
 
-1::
+~1::
 GoSub, Change_Settings
 return
+
+~2::
+ExitApp
 
 Change_Settings:
 Gui, Manager:Submit, NoHide
@@ -289,9 +293,9 @@ If (IsObject(WindowsData) AND Get_Window_Title)
             ; Register Methode
             If (Data["Methode"] = "Register")
             {
-                For Type, Content in Data["Set"]
+                For Type, TypeData in Data["Set"]
                 {
-                    For Key, Value in Content
+                    For Key, Value in TypeData
                     {
                         If (Type AND Path AND Key) ; Value can be 0 thats why we don't check it...
                             RegWrite, % Type, % Path, % Key, % Value
@@ -299,7 +303,7 @@ If (IsObject(WindowsData) AND Get_Window_Title)
                 }
             }
 
-            ; StringReplace Methode
+            ; StringReplace Methode - WORK IN PROGRESS
             If (Data["Methode"] = "StringReplace")
             {
                 ; File must exist...
@@ -314,15 +318,15 @@ If (IsObject(WindowsData) AND Get_Window_Title)
                     ; Split Content of the File after each Line into a Object
                     SettingLine := StrSplit(SettingData, "`n")
 
-                    For Key, Value in Data["Set"]
+                    For Key, KeyData in Data["Set"]
                     {
                         ; Going trough each Line
                         Loop % SettingLine.Count()
                         {
                             If (InStr(SettingLine[A_Index], Key))
                             {
-                                NewStr := RegExMatch(SettingData, "\w+\b", UOV, SettingPos + StrLen(Key))
-                                SettingData := RegExReplace(SettingData, UOV, Value,, 1, NewStr)
+                                NewStr := RegExMatch(SettingData, "\w+\b", Value, SettingPos + StrLen(Key))
+                                SettingData := RegExReplace(SettingData, Value, KeyData,, 1, NewStr)
                             }
 
                             ; Set Pointer to the end of current Content of the Line
@@ -341,36 +345,46 @@ If (IsObject(WindowsData) AND Get_Window_Title)
                 }
             }
 
-            /*
             ; JSON Methode - WORK IN PROGRESS
             If (Data["Methode"] = "JSON")
             {
                 ; Open File
                 SettingFile := FileOpen(Path, "rw", "UTF-8-RAW")
+                ; Get File Encoding
+                SettingEncoding := SettingFile.Encoding
+                If (!SettingEncoding)
+                ; If File has no Encoding use UTF-16-RAW
+                    SettingEncoding := "UTF-16-RAW"
                 ; Get Content of File
                 SettingData := SettingFile.Read()
                 ; Load as JSON
                 SettingData := JSON.Load(SettingData)
+                ; Close File
+                SettingFile.Close()
+                ; Delete File
+                ; FileDelete, % Path
+                ; Create new File
+                ; SettingFile := FileOpen(Path, "a", SettingEncoding)
+
+                /*
                 ; Start Position of Pointer
                 SettingPos := false
                 ; Set Pointer Position
                 SettingFile.Seek(SettingPos)
+                */
 
                 For Key, Value in Data["Set"]
                 {
-                    ;MsgBox % Key A_Space Value
-                    If (SettingData.HasKey(Key))
-                    {
-                        SettingData[Key] := Value
-                    }
+                    MsgBox % Key "`n" Value
+                    If (Object(Value))
+                        Key := Value
                 }
 
                 ; Write new File
-                SettingFile.Write(JSON.Dump(SettingData,,4))
+                ; SettingFile.Write(JSON.Dump(SettingData,,4))
                 ; Close File
-                SettingFile.Close()
+                ; SettingFile.Close()
             }
-            */
 
             ; XML Methode - WORK IN PROGRESS
             If (Data["Methode"] = "XML")
@@ -403,14 +417,14 @@ If (IsObject(WindowsData) AND Get_Window_Title)
                 ; Load File Content as XML
                 XMLData.XML.LoadXML(SettingData)
 
-                For Section, Key in Data["Set"]
+                For Section, SectionData in Data["Set"]
                 {
-                    If (Key["Value"])
+                    If (SectionData["Value"])
                     {
                         ; Add/Change Value
-                        XMLData.Add(Section,, Key["Value"])
+                        XMLData.Add(Section,, SectionData["Value"])
                         ; Going for each Attribute
-                        For Attribute, Value in Key["Attributes"]
+                        For Attribute, Value in SectionData["Attributes"]
                         {
                             ; Add/Change Attribute
                             XMLData.Add(Section, Object(Attribute, Value))
@@ -423,20 +437,41 @@ If (IsObject(WindowsData) AND Get_Window_Title)
                 ; Close File
                 SettingFile.Close()
             }
-        }
-        else If (Path AND Data)
-        {
-            ; Copy & Paste Methode - WORK IN PROGRESS
+
+            ; Ini Methode
+            If (Data["Methode"] = "Ini")
+            {
+                ; File must exist...
+                If (FileExist(Path))
+                {
+                    ; Going to each Section...
+                    For Section, SectionData in Data["Set"]
+                    {
+                        ; Going to each Key...
+                        For Key, Value in SectionData
+                        {
+                            If (Section AND Key)
+                            {
+                                ; Write new Value for Key in Section...
+                                IniWrite, % Value, % Path, % Section, % Key
+                            }
+                        }
+                    }
+                }
+            }
+
+            ; Copy & Paste Methode
             If (Data["Methode"] = "CopyPaste")
             {
-                If (FileExist(Path) AND FileExist(Data))
+                If (FileExist(Path) AND Data["Destination"])
                 {
-                    ; FileCopy, Source, Dest [, Flag (1 = overwrite)]
+                    FileCopy, % Path, % Data["Destination"], % Data["Overwrite"] ? Data["Overwrite"] : false
                 }
             }
         }
     }
 
+    ; Not sure yet if i have to reload the new Settings
     /*
     WindowsFile := FileOpen(A_ScriptDir "\windows.json", "r", "UTF-8-RAW")
     WindowsData := JSON.Load(WindowsFile.Read())
@@ -983,6 +1018,10 @@ If (Get_Window_Title)
         ; If not restart Window...
         If (!(Window_Get_Window_ProcessID := ErrorLevel) AND Window_Auto_Start)
         {
+            ; Change Window Setting...
+            If (Window_Change_Settings)
+                GoSub, Change_Settings
+
             If (WindowData["Steam"]["AppID"])
             {
                 RegRead, SteamExecute, % "HKEY_CURRENT_USER\SOFTWARE\Valve\Steam", SteamExe
