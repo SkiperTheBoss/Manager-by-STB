@@ -1,11 +1,15 @@
 # Manager-by-STB
 A Tool which i created for [ParsecSoda](http://https://github.com/FlavioFS/ParsecSoda "ParsecSoda") that automate a lot of things.
 
+------------
+
 **Infomation**
 * The Project Name is not really choosen yet.
 * Contact me if you want to make the README or anything else more beautiful. Discord: SkiperTheBoss#1337
 * The [Roadmap](https://trello.com/b/2skmBgus/manager-by-stb "Roadmap") is always UP-TO-DATE!
 * More Details will coming soon...
+
+### >>> THIS IS A EARLY VERSION PLEASE MAKE SURE YOU KNOW WHAT ARE YOU DOING! <<<
 
 ------------
 
