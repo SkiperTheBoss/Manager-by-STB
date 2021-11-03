@@ -293,7 +293,7 @@ If (IsObject(WindowsData) AND Get_Window_Title)
                 {
                     For Key, Value in Content
                     {
-                        If (Type AND Path AND Key)
+                        If (Type AND Path AND Key) ; Value can be 0 thats why we don't check it...
                             RegWrite, % Type, % Path, % Key, % Value
                     }
                 }
@@ -370,33 +370,59 @@ If (IsObject(WindowsData) AND Get_Window_Title)
                 ; Close File
                 SettingFile.Close()
             }
+            */
 
             ; XML Methode - WORK IN PROGRESS
-            If (Data["Methode"] = "XML" AND)
+            If (Data["Methode"] = "XML")
             {
                 ; Open File
-                SettingFile := FileOpen(Path, "rw", "UTF-16-RAW")
+                SettingFile := FileOpen(Path, "rw")
+                ; Get File Encoding
+                SettingEncoding := SettingFile.Encoding
+                If (!SettingEncoding)
+                ; If File has no Encoding use UTF-16-RAW
+                    SettingEncoding := "UTF-16-RAW"
                 ; Get Content of File
                 SettingData := SettingFile.Read()
+                ; Close File
+                SettingFile.Close()
+                ; Delete File
+                FileDelete, % Path
+                ; Create new File
+                SettingFile := FileOpen(Path, "a", SettingEncoding)
+
+                /*
                 ; Start Position of Pointer
                 SettingPos := false
                 ; Set Pointer Position
                 SettingFile.Seek(SettingPos)
+                */
 
                 ; Create new XML Class
                 XMLData := New XML("xml")
                 ; Load File Content as XML
                 XMLData.XML.LoadXML(SettingData)
-                ; Change Value
-                XMLData.Add("Fullscreen",, "true")
 
-                ; MsgBox % XMLData[]
+                For Section, Key in Data["Set"]
+                {
+                    If (Key["Value"])
+                    {
+                        ; Add/Change Value
+                        XMLData.Add(Section,, Key["Value"])
+                        ; Going for each Attribute
+                        For Attribute, Value in Key["Attributes"]
+                        {
+                            ; Add/Change Attribute
+                            XMLData.Add(Section, Object(Attribute, Value))
+                        }
+                    }
+                }
+
                 ; Write new File
                 SettingFile.Write(XMLData[])
                 ; Close File
                 SettingFile.Close()
             }
-            */
         }
         else If (Path AND Data)
         {
