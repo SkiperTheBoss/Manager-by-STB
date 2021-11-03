@@ -37,6 +37,7 @@ The Tool is made for the Software [ParsecSoda](http://https://github.com/FlavioF
 * Change Settings
 
 Window could be also a Window of a Game/Software or anything else!
+Also make sure you check out the [Wiki](https://github.com/SkiperTheBoss/Manager-by-STB/wiki)
 
 ------------
 
