@@ -25,7 +25,7 @@ The Tool is made for the Software [ParsecSoda](http://https://github.com/FlavioF
 * Blocking Input to not close the OBS Projector with ESC, ALT+F4 or Rightclick
 * Change the Game Name (Work in Progress)
 * Hide Cursor (Work in Progress)
-* Automatically start Window (which could be the Software/Game)
+* Automatically start Window
 * Automatically attach the Window to the OBS Projector
 * Automatically focus the Window
 * Blocking Input ALT+F4
@@ -34,6 +34,9 @@ The Tool is made for the Software [ParsecSoda](http://https://github.com/FlavioF
 * Restrict the Mouse to the Window Area
 * Change the Size of the Window
 * Move the Window to your configureated Position
+* Change Settings
+
+Window could be also a Window of a Game/Software or anything else!
 
 ------------
 
