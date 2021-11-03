@@ -42,7 +42,7 @@ Also make sure you check out the [Wiki](https://github.com/SkiperTheBoss/Manager
 ------------
 
 **Requirements**
-* To run Script you need [AutoHotkey](https://www.autohotkey.com/ "AutoHotkey") unless you using the Execute under [Releases](https://github.com/SkiperTheBoss/Manager-by-STB/releases "Releases") when available.
+* To run Script you need [AutoHotkey](https://www.autohotkey.com/ "AutoHotkey") (Current Version) unless you using the Execute under [Releases](https://github.com/SkiperTheBoss/Manager-by-STB/releases "Releases") when available.
 * [OBS Studio](http://https://obsproject.com/ "OBS Studio")
 * [OPTIONAL] [OBS-Websocket](https://obsproject.com/forum/resources/obs-websocket-remote-control-obs-studio-from-websockets.466/ "OBS-Websocket") a Plugin for OBS Studio.
 * [OPTIONAL] [OBSCommand](https://obsproject.com/forum/resources/command-line-tool-for-obs-websocket-plugin-windows.615/ "OBSCommand") to communicate with [OBS-Websocket](https://obsproject.com/forum/resources/obs-websocket-remote-control-obs-studio-from-websockets.466/ "OBS-Websocket").
